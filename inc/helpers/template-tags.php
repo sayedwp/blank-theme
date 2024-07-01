@@ -114,25 +114,39 @@ function blank_theme_entry_footer() {
 }
 
 /**
- * Get site title.
+ * Get site title with additional context.
  *
  * @param string $title_class Show or hide title.
  *
  * @return void
  */
 function blank_theme_site_title( $title_class = '' ) {
-	$title_format = '<h2 class="site-title %s"><a href="%s" rel="home">%s</a></h2>';
+	$title_format = '<h2 class="site-title %s">%s</h2>'; // Change to use <h2> for site title
 
-	if ( is_front_page() && is_home() ) {
-		$title_format = '<h1 class="site-title %s"><a href="%s" rel="home">%s</a></h1>';
+	$site_name = get_bloginfo( 'name', 'display' );
+	$site_description = get_bloginfo( 'description', 'display' );
+
+	// Check if a site description is available.
+	if ( $site_description ) {
+		$site_title = sprintf(
+			$title_format,
+			esc_attr( $title_class ),
+			'<a href="' . esc_url( home_url( '/' ) ) . '" rel="home">' .
+			'<span class="site-name">' . esc_html( $site_name ) . '</span>' .
+			'<span class="site-description">' . esc_html( $site_description ) . '</span>' .
+			'</a>'
+		);
+	} else {
+		$site_title = sprintf(
+			$title_format,
+			esc_attr( $title_class ),
+			'<a href="' . esc_url( home_url( '/' ) ) . '" rel="home">' .
+			'<span class="site-name">' . esc_html( $site_name ) . '</span>' .
+			'</a>'
+		);
 	}
 
-	printf(
-		$title_format, // phpcs:ignore
-		esc_attr( $title_class ),
-		esc_url( home_url( '/' ) ),
-		get_bloginfo( 'name', 'display' ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	);
+	echo $site_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**
